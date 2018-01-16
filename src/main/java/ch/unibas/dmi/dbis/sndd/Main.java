@@ -1,8 +1,45 @@
 package ch.unibas.dmi.dbis.sndd;
 
+import ch.unibas.dmi.dbis.sndd.ambryfs.AmbryFileSystemProvider;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.Path;
+import java.util.HashMap;
+
 class Main {
 
-  public static void main(String[] args) {
+  private static final String ambryID = "AAMAAf__AAAAAQAAAAAAAAAAAAAAJGUxMDJjYjkxLTU4M2MtNDliMS05MTlmLWRjN2M3ODQyN2M0OQ";
 
+  public static void main(String[] args) throws URISyntaxException, IOException {
+    AmbryFileSystemProvider provider = new AmbryFileSystemProvider();
+    FileSystem one = provider.newFileSystem(new URI("ambry:localhost:1174"), new HashMap<>());
+    FileSystem two = provider.getFileSystem(new URI("ambry://localhost:1174"));
+    FileSystem three = provider.getFileSystem(new URI("ambry://localhost:1174/"));
+    FileSystem four = provider.getFileSystem(new URI("ambry:localhost:1174/"));
+    FileSystem five = provider.getFileSystem(new URI("ambry://localhost:1174/" + ambryID));
+    FileSystem six = provider.getFileSystem(new URI("ambry:localhost:1174/" + ambryID));
+    if (!(one == two)) {
+      throw new RuntimeException();
+    }
+    if (!(three == two)) {
+      throw new RuntimeException();
+    }
+    if (!(four == three)) {
+      throw new RuntimeException();
+    }
+    if (!(five == four)) {
+      throw new RuntimeException();
+    }
+    if (!(six == five)) {
+      throw new RuntimeException();
+    }
+    Path path = one.getPath("/");
+    System.out.println(path.toString());
+    System.out.println(path.resolve(ambryID));
+    Path idPath = one.getPath(ambryID);
+    System.out.println("IDPath: " + idPath);
+    System.out.println("IDPath abs: " + idPath.toAbsolutePath());
   }
 }
