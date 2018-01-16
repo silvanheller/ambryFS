@@ -1,0 +1,51 @@
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+
+group 'ch.unibas.dmi.dbis.sndd'
+
+def mainClassName = 'ch.unibas.dmi.dbis.sndd.main.Main'
+
+compileJava.options.encoding = 'UTF-8'
+sourceCompatibility = 1.8
+
+dependencies {
+
+    // Logging
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.22'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.7'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
+
+    // Commons
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
+
+    //Testing
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+// Make the jar executable on its own as well
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes "Manifest-Version": "1.0"
+        attributes 'Main-Class': mainClassName
+    }
+    baseName "ambryFS"
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        //Exclude logs directory from indexing
+        excludeDirs += file('logs')
+    }
+}
