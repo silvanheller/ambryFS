@@ -10,7 +10,7 @@ apply plugin: 'idea'
 
 
 group 'ch.unibas.dmi.dbis.sndd'
-version '0.3.0'
+version '0.4.0'
 
 def mainClassName = 'ch.unibas.dmi.dbis.sndd.main.Main'
 

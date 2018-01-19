@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystemException;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent.Kind;
@@ -25,11 +24,11 @@ public class AmbryPath implements Path {
   private final AmbryFileSystem fs;
   private byte[] data = null;  //Ambry is immutable
 
-  public String getAmbryPath() {
+  private String getAmbryPath() {
     return ambryPath;
   }
 
-  public AmbryPath(String ambryPath, AmbryFileSystem fs) {
+  AmbryPath(String ambryPath, AmbryFileSystem fs) {
     this.ambryPath = ambryPath;
     this.fs = fs;
   }
@@ -90,10 +89,7 @@ public class AmbryPath implements Path {
 
   @Override
   public boolean startsWith(String other) {
-    if (other.equals("/")) {
-      return true;
-    }
-    return false;
+    return other.equals("/");
   }
 
   @Override
@@ -136,7 +132,10 @@ public class AmbryPath implements Path {
 
   @Override
   public Path relativize(Path other) {
-    throw new UnsupportedOperationException();
+    if (this.ambryPath.equals("/")) {
+      return fs.getPath(((AmbryPath) other).getAmbryPath().replaceAll("/", ""));
+    }
+    return fs.getPath(((AmbryPath) other.toAbsolutePath()).getAmbryPath());
   }
 
   @Override
@@ -208,7 +207,7 @@ public class AmbryPath implements Path {
     return ambryPath;
   }
 
-  public AmbryFileAttributes getReadAttributes() {
+  AmbryFileAttributes getReadAttributes() {
     return new AmbryFileAttributes(data.length);
   }
 }
