@@ -18,10 +18,13 @@ public class SeekableAmbryByteChannel implements SeekableByteChannel {
 
   @Override
   public int read(ByteBuffer dst) throws IOException {
-    int l = (int) Math.min(dst.remaining(), size() - position);
-    dst.put(data, (int) position, l);
-    position += l;
-    return l;
+    if(position>=data.length-1){
+      return -1;
+    }
+    int len = (int) Math.min(dst.remaining(), this.size() - position);
+    dst.put(data, (int) position, len);
+    position += len;
+    return len;
   }
 
   @Override
@@ -57,6 +60,6 @@ public class SeekableAmbryByteChannel implements SeekableByteChannel {
 
   @Override
   public void close() throws IOException {
-
+    //Ignore call
   }
 }

@@ -1,12 +1,18 @@
 package ch.unibas.dmi.dbis.sndd;
 
 import ch.unibas.dmi.dbis.sndd.ambryfs.AmbryFileSystemProvider;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import javax.imageio.ImageIO;
 
 class Main {
 
@@ -41,5 +47,11 @@ class Main {
     Path idPath = one.getPath(ambryID);
     System.out.println("IDPath: " + idPath);
     System.out.println("IDPath abs: " + idPath.toAbsolutePath());
+
+    InputStream is = Files.newInputStream(idPath, StandardOpenOption.READ);
+    System.out.println("Reading File");
+    BufferedImage input = ImageIO.read(is);
+    System.out.println("Writing file");
+    ImageIO.write(input, "png", new File("output.png"));
   }
 }

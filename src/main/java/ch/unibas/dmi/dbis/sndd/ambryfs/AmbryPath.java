@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystemException;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent.Kind;
@@ -189,7 +190,7 @@ public class AmbryPath implements Path {
     return Integer.compare(this.ambryPath.length(), ((AmbryPath) other).getAmbryPath().length());
   }
 
-  byte[] fetchData() {
+  byte[] fetchData() throws IOException {
     if (data != null) {
       return data;
     }

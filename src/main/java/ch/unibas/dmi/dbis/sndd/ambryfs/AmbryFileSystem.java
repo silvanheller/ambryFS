@@ -14,6 +14,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Request.Builder;
+import okhttp3.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author silvan on 16.01.18.
@@ -23,18 +29,20 @@ public class AmbryFileSystem extends FileSystem {
   private final String host;
   private final int port;
   private final AmbryFileSystemProvider provider;
-  public static final String AMBRY_SEPARATOR = "/";
+  private static final String AMBRY_SEPARATOR = "/";
   private volatile boolean open = true;
+  private static final Logger LOGGER = LogManager.getLogger();
+  private final OkHttpClient client = new OkHttpClient();
 
-  public String getHost() {
+  String getHost() {
     return host;
   }
 
-  public int getPort() {
+  int getPort() {
     return port;
   }
 
-  public AmbryFileSystem(String host, int port, AmbryFileSystemProvider provider) {
+  AmbryFileSystem(String host, int port, AmbryFileSystemProvider provider) {
     this.host = host;
     this.port = port;
     this.provider = provider;
@@ -47,7 +55,6 @@ public class AmbryFileSystem extends FileSystem {
 
   @Override
   public void close() throws IOException {
-    //TODO close rest?
     open = false;
   }
 
@@ -122,12 +129,26 @@ public class AmbryFileSystem extends FileSystem {
     throw new UnsupportedOperationException();
   }
 
-  public byte[] get(String ambryPath) {
+  byte[] get(String ambryPath) throws IOException {
     if (!this.isOpen()) {
       throw new ClosedFileSystemException();
     }
 
-    //TODO GET Call
-    return null;
+    String cleanPath = ambryPath.replace("/", "");
+    Builder builder = new Builder()
+        .url("http://" + this.getHost() + ":" + this.getPort() + "/" + cleanPath)
+        .addHeader("ambry-id", cleanPath);
+    Request request = builder.build();
+    Response response = client.newCall(request).execute();
+    if (response.code() != 200) {
+      LOGGER.error("Got response code {} for get", response.code());
+      throw new IOException(response.message());
+    }
+    byte[] data = response.body().bytes();    //This is an awful idea for Large Files
+    if (data == null) {
+      throw new IOException();
+    }
+    System.out.println("Returning byte array");
+    return data;
   }
 }

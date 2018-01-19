@@ -25,6 +25,7 @@ dependencies {
 
     // Commons
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
+    compile 'com.squareup.okhttp3:okhttp:3.9.1'
 
     //Testing
     testCompile group: 'junit', name: 'junit', version: '4.12'
