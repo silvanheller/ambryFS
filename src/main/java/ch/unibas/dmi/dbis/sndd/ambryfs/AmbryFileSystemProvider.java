@@ -31,6 +31,10 @@ public class AmbryFileSystemProvider extends FileSystemProvider {
   private static int DEFAULT_PORT = 1174;
   private Map<String, AmbryFileSystem> fs = new HashMap<>();
 
+  private void createFS(String host, int port, String url) {
+    fs.put(url, new AmbryFileSystem(host, port, this));
+  }
+
   private AmbryFileSystem getSystem(URI uri, boolean create) {
     String host = uri.getHost();
     int port = uri.getPort();
@@ -42,7 +46,10 @@ public class AmbryFileSystemProvider extends FileSystemProvider {
     }
     String url = "http://" + host + ":" + port;
     if (create) {
-      fs.put(url, new AmbryFileSystem(host, port, this));
+      createFS(host, port, url);
+    }
+    if (!fs.containsKey(url)) {
+      createFS(host, port, url);
     }
     if (fs.containsKey(url)) {
       return fs.get(url);

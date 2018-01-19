@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
@@ -53,5 +54,8 @@ class Main {
     BufferedImage input = ImageIO.read(is);
     System.out.println("Writing file");
     ImageIO.write(input, "png", new File("output.png"));
+    URI uri = new URI(
+        "ambry://localhost:1174/AAMAAf__AAAAAQAAAAAAAAAAAAAAJGUxMDJjYjkxLTU4M2MtNDliMS05MTlmLWRjN2M3ODQyN2M0OQ");
+    Paths.get(uri);
   }
 }

@@ -148,7 +148,6 @@ public class AmbryFileSystem extends FileSystem {
     if (data == null) {
       throw new IOException();
     }
-    System.out.println("Returning byte array");
     return data;
   }
 }
