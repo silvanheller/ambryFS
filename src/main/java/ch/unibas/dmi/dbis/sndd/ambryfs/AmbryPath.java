@@ -50,7 +50,7 @@ public class AmbryPath implements Path {
 
   @Override
   public Path getFileName() {
-    return fs.getPath(ambryPath);
+    return fs.getPath(ambryPath.replaceAll("/", ""));
   }
 
   @Override
@@ -140,7 +140,7 @@ public class AmbryPath implements Path {
 
   @Override
   public URI toUri() {
-    String uri = "ambry:" + fs.getHost() + ":" + fs.getPort() + "/" + ambryPath.replaceAll("/", "");
+    String uri = "ambry:" + fs.getHost() + ":" + fs.getPort() + this.toAbsolutePath();
     try {
       return new URI(uri);
     } catch (URISyntaxException e) {
